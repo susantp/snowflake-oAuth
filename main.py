@@ -105,7 +105,4 @@ async def snowflake_callback(request: Request, code: str, state: str):
 
 @app.get("/profile")
 async def get_user_profile(payload: dict = Depends(get_current_user)):
-    """
-    A protected route that requires a valid local session token.
-    """
     return JSONResponse(content={"message": "Login successful!", "username": payload.get('username')})
