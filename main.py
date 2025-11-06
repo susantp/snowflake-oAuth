@@ -28,7 +28,10 @@ async def root():
 
 
 @app.get('/login')
-async def login():
+async def login(payload: dict | None = Depends(get_current_user)):
+    if payload is not None:
+        return RedirectResponse(url="/profile", status_code=status.HTTP_308_PERMANENT_REDIRECT)
+
     state = secrets.token_urlsafe(32)
     auth_url = (
         f"https://{settings.snowflake_account_url}/oauth/authorize"
@@ -104,5 +107,8 @@ async def snowflake_callback(request: Request, code: str, state: str):
 
 
 @app.get("/profile")
-async def get_user_profile(payload: dict = Depends(get_current_user)):
+async def get_user_profile(payload: dict | None = Depends(get_current_user)):
+    if payload is None:
+        return RedirectResponse(url="/login", status_code=status.HTTP_308_PERMANENT_REDIRECT)
+
     return JSONResponse(content={"message": "Login successful!", "username": payload.get('username')})

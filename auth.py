@@ -3,6 +3,8 @@ from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 from typing import Optional, Dict
 
+from starlette.responses import RedirectResponse
+
 from settings import Settings
 
 settings = Settings()
@@ -23,7 +25,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     return encoded_jwt
 
 
-async def get_current_user(request: Request) -> dict[str, str]:
+async def get_current_user(request: Request) -> dict[str, str] | None:
     token = request.cookies.get("app_session_token")
 
     credentials_exception = HTTPException(
@@ -33,7 +35,7 @@ async def get_current_user(request: Request) -> dict[str, str]:
     )
 
     if token is None:
-        raise credentials_exception
+        return token
 
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
