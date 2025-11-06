@@ -49,13 +49,6 @@ async def login(payload: dict | None = Depends(get_current_user)):
         httponly=True,
         samesite="lax"
     )
-    response.set_cookie(
-        key=STATE_COOKIE_NAME,
-        value=state,
-        max_age=600,  # 10 minutes
-        httponly=True,
-        samesite="lax"
-    )
     return response
 
 
